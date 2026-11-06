@@ -3,1142 +3,947 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Calculator | ক্যালকুলেটর</title>
+  <title>Virtual Phone OS Cloud | ভার্চুয়াল ফোন প্ল্যাটফর্ম</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #121316;
-      --surface: #1a1c20;
-      --surface-variant: #26282e;
-      --card-border: #32363e;
-      --text-main: #f8fafc;
+      --bg: #0b0f19;
+      --card-bg: #151c2c;
+      --border: #232d42;
+      --primary: #3b82f6;
+      --accent: #ff9f0a;
+      --success: #10b981;
+      --text: #f8fafc;
       --text-muted: #94a3b8;
-      --primary: #ff9f0a;
-      --primary-hover: #ffb340;
-      --accent-secondary: #2dd4bf;
-      --key-num-bg: #24272d;
-      --key-num-hover: #2e323a;
-      --key-func-bg: #333842;
-      --key-func-hover: #3f4552;
-      --radius: 20px;
-    }
-
-    [data-theme="light"] {
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --surface-variant: #edf2f7;
-      --card-border: #e2e8f0;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --primary: #ff9f0a;
-      --primary-hover: #f59100;
-      --accent-secondary: #0d9488;
-      --key-num-bg: #f1f5f9;
-      --key-num-hover: #e2e8f0;
-      --key-func-bg: #e2e8f0;
-      --key-func-hover: #cbd5e1;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
       -webkit-tap-highlight-color: transparent;
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     }
 
     body {
       background-color: var(--bg);
-      color: var(--text-main);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      padding: 16px;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      padding: 16px 12px 40px;
     }
 
-    .app-container {
+    /* Platform Header */
+    .platform-header {
       width: 100%;
-      max-width: 440px;
-      background: var(--surface);
-      border-radius: 32px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-      border: 1px solid var(--card-border);
-      overflow: hidden;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 14px 20px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .brand-text h1 {
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .brand-text p {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-create-phone {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-create-phone:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    /* Virtual Phones Tabs Bar */
+    .phones-bar {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+
+    .phone-pill {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 14px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .phone-pill.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .phone-pill .delete-btn {
+      color: #ef4444;
+      margin-left: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    /* Phone Device Simulator Frame */
+    .device-wrapper {
+      position: relative;
+      width: 380px;
+      height: 760px;
+      background: #000;
+      border-radius: 50px;
+      padding: 12px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 0 4px #262c38;
       display: flex;
       flex-direction: column;
     }
 
-    /* Top Bar */
-    .top-bar {
+    .phone-screen {
+      flex: 1;
+      border-radius: 40px;
+      overflow: hidden;
+      background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80') center/cover no-repeat;
+      position: relative;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 24px 12px;
+      flex-direction: column;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
     }
 
-    .brand-title {
-      font-size: 20px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .brand-badge {
-      background: rgba(255, 159, 10, 0.15);
-      color: var(--primary);
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .icon-btn {
-      background: var(--surface-variant);
-      border: none;
-      color: var(--text-main);
-      width: 38px;
+    /* Status Bar */
+    .status-bar {
       height: 38px;
-      border-radius: 50%;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      z-index: 100;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    .notch {
+      width: 100px;
+      height: 22px;
+      background: #000;
+      border-radius: 0 0 14px 14px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
     }
 
-    .icon-btn:hover {
-      background: var(--key-func-hover);
+    .notch-camera {
+      width: 10px;
+      height: 10px;
+      background: #111;
+      border-radius: 50%;
+      border: 1px solid #333;
     }
 
-    .icon-btn.active {
-      background: rgba(45, 212, 191, 0.2);
-      color: var(--accent-secondary);
-    }
-
-    /* Tab Switcher */
-    .nav-tabs {
-      display: flex;
-      background: var(--surface-variant);
-      padding: 4px;
-      border-radius: 16px;
-      margin: 8px 20px;
-      gap: 4px;
-    }
-
-    .tab-btn {
+    /* Screen Views */
+    .screen-content {
       flex: 1;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Home Screen */
+    .home-screen {
+      position: absolute;
+      inset: 0;
+      padding: 16px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.25s ease;
+    }
+
+    .home-screen.hidden {
+      transform: scale(0.9);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .widget-clock {
+      text-align: center;
+      color: #fff;
+      margin-top: 24px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    .widget-time {
+      font-size: 46px;
+      font-weight: 300;
+      letter-spacing: -1px;
+    }
+
+    .widget-date {
       font-size: 13px;
-      font-weight: 700;
-      padding: 8px 0;
-      border-radius: 12px;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+
+    /* App Grid */
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px 10px;
+      margin-top: 20px;
+    }
+
+    .app-icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: transform 0.15s;
     }
 
-    .tab-btn.active {
-      background: var(--surface);
-      color: var(--primary);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    .app-icon-item:active {
+      transform: scale(0.9);
     }
 
-    /* Views */
-    .view-panel {
+    .icon-box {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.4);
+    }
+
+    .app-name {
+      font-size: 11px;
+      color: #fff;
+      font-weight: 600;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+      text-align: center;
+    }
+
+    /* Dock Bar */
+    .dock-bar {
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(25px);
+      border-radius: 26px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-around;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    /* Active App Window Container */
+    .app-window {
+      position: absolute;
+      inset: 0;
+      background: #121316;
       display: none;
-      padding: 12px 20px 24px;
+      flex-direction: column;
+      z-index: 50;
+      animation: appOpen 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .app-window.active {
+      display: flex;
+    }
+
+    @keyframes appOpen {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .app-window-header {
+      height: 48px;
+      background: #1a1c20;
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #282c35;
+    }
+
+    .app-window-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      background: #121316;
+    }
+
+    /* Bottom Navigation Pill */
+    .phone-nav-bar {
+      height: 38px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+    }
+
+    .nav-btn {
+      color: #94a3b8;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 6px 16px;
+      border-radius: 10px;
+    }
+
+    .nav-btn:hover {
+      color: #fff;
+    }
+
+    /* App Store Styles */
+    .store-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #232d42;
+      margin-bottom: 14px;
+    }
+
+    .store-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1a1e28;
+      padding: 12px 14px;
+      border-radius: 16px;
+      margin-bottom: 10px;
+      border: 1px solid #283347;
+    }
+
+    .store-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .store-btn {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .store-btn.installed {
+      background: #10b981;
+    }
+
+    /* Modal for Creating Phone */
+    .create-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .create-modal-overlay.open {
+      display: flex;
+    }
+
+    .create-modal {
+      width: 90%;
+      max-width: 400px;
+      background: #171d2b;
+      border: 1px solid #2d384e;
+      border-radius: 24px;
+      padding: 24px;
+      display: flex;
       flex-direction: column;
       gap: 14px;
     }
 
-    .view-panel.active {
-      display: flex;
-    }
-
-    /* Screen Display */
-    .calc-screen {
-      background: var(--surface-variant);
-      border-radius: 24px;
-      padding: 20px;
-      min-height: 140px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      text-align: right;
-      position: relative;
-    }
-
-    .screen-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .mode-pill {
-      font-size: 11px;
-      font-weight: 700;
-      background: rgba(255, 255, 255, 0.08);
-      padding: 2px 8px;
-      border-radius: 6px;
-      color: var(--text-muted);
-      cursor: pointer;
-    }
-
-    .copy-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .copy-btn:hover {
-      color: var(--primary);
-    }
-
-    .primary-display {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 40px;
-      font-weight: 600;
-      color: var(--text-main);
-      overflow-x: auto;
-      white-space: nowrap;
-      scroll-behavior: smooth;
-      padding-top: 10px;
-    }
-
-    .preview-display {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 18px;
-      color: var(--primary);
-      min-height: 24px;
-    }
-
-    /* Keypads */
-    .scientific-panel {
-      display: none;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      background: rgba(0, 0, 0, 0.15);
-      padding: 10px;
-      border-radius: 18px;
-    }
-
-    .scientific-panel.active {
-      display: grid;
-    }
-
-    .sc-btn {
-      background: var(--key-func-bg);
-      color: var(--accent-secondary);
-      border: none;
-      border-radius: 12px;
-      padding: 10px 0;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .sc-btn:active {
-      transform: scale(0.94);
-      background: var(--key-func-hover);
-    }
-
-    .keypad-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-
-    .btn {
-      border: none;
-      border-radius: 22px;
-      height: 64px;
-      font-size: 22px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
-      user-select: none;
-    }
-
-    .btn:active {
-      transform: scale(0.92);
-    }
-
-    .btn-num {
-      background: var(--key-num-bg);
-      color: var(--text-main);
-    }
-
-    .btn-num:hover {
-      background: var(--key-num-hover);
-    }
-
-    .btn-func {
-      background: var(--key-func-bg);
-      color: var(--accent-secondary);
-      font-size: 19px;
-    }
-
-    .btn-func:hover {
-      background: var(--key-func-hover);
-    }
-
-    .btn-op {
-      background: var(--primary);
-      color: #ffffff;
-      font-size: 26px;
-    }
-
-    .btn-op:hover {
-      background: var(--primary-hover);
-    }
-
-    .btn-eq {
-      background: var(--primary);
-      color: #000000;
-      font-size: 28px;
-      font-weight: 800;
-    }
-
-    /* Converter Styles */
-    .card {
-      background: var(--surface-variant);
-      border-radius: 20px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .card-label {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--primary);
-      letter-spacing: 0.5px;
-    }
-
-    select {
-      background: var(--surface);
-      color: var(--text-main);
-      border: 1px solid var(--card-border);
-      padding: 6px 12px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      outline: none;
-    }
-
-    .swap-btn-row {
-      display: flex;
-      justify-content: center;
-      margin: -6px 0;
-    }
-
-    .swap-circle-btn {
-      background: var(--primary);
+    .create-input {
+      width: 100%;
+      background: #0f1420;
+      border: 1px solid #283349;
       color: #fff;
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      transition: transform 0.3s;
-    }
-
-    .swap-circle-btn:active {
-      transform: rotate(180deg) scale(0.9);
-    }
-
-    .conv-display {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text-main);
-      overflow-x: auto;
-    }
-
-    /* Tip Calculator */
-    .tip-result-card {
-      background: rgba(255, 159, 10, 0.12);
-      border: 1px solid rgba(255, 159, 10, 0.25);
-      border-radius: 24px;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .tip-big-amount {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 38px;
-      font-weight: 800;
-      color: var(--text-main);
-      margin: 4px 0 12px;
-    }
-
-    .tip-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding-top: 12px;
-    }
-
-    .stat-box small {
-      font-size: 11px;
-      color: var(--text-muted);
-      display: block;
-    }
-
-    .stat-box strong {
+      padding: 12px 16px;
+      border-radius: 12px;
       font-size: 14px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .chip-row {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding: 4px 0;
-    }
-
-    .chip {
-      background: var(--surface);
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
-      border-radius: 12px;
-      padding: 6px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .chip.active {
-      background: var(--primary);
-      color: #000;
-      border-color: var(--primary);
-    }
-
-    .input-field {
-      width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 18px;
-      font-weight: 600;
       outline: none;
     }
 
-    /* History Modal */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    .modal-overlay.open {
+    /* YouTube UI inside phone */
+    .yt-search-box {
       display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
-    .modal-content {
+    .yt-input {
+      flex: 1;
+      background: #1f2533;
+      border: 1px solid #303a50;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+
+    .yt-player-container {
       width: 100%;
-      max-width: 440px;
-      background: var(--surface);
-      border-radius: 32px 32px 0 0;
-      padding: 24px;
-      max-height: 80vh;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      animation: slideUp 0.25s ease-out;
+      height: 190px;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 12px;
     }
 
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
-
-    .history-list {
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-height: 50vh;
-    }
-
-    .history-item {
-      background: var(--surface-variant);
-      padding: 12px 16px;
-      border-radius: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-
-    .history-item:hover {
-      background: var(--key-func-hover);
-    }
-
-    .history-expr {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .history-res {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e293b;
-      color: #f8fafc;
-      padding: 10px 20px;
-      border-radius: 99px;
-      font-size: 13px;
-      font-weight: 600;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-      z-index: 2000;
-    }
-
-    .toast.show {
-      opacity: 1;
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    <!-- Top Header -->
-    <header class="top-bar">
-      <div class="brand-title">
-        <span>Calculator</span>
-        <span class="brand-badge">Pro</span>
-      </div>
-      <div class="top-actions">
-        <button class="icon-btn" id="btn-theme" title="Toggle Theme">🌙</button>
-        <button class="icon-btn" id="btn-history" title="History">🕒</button>
-      </div>
-    </header>
-
-    <!-- Navigation Tabs -->
-    <div class="nav-tabs">
-      <button class="tab-btn active" data-tab="calc">ক্যালকুলেটর</button>
-      <button class="tab-btn" data-tab="conv">কনভার্টার</button>
-      <button class="tab-btn" data-tab="tip">টিপ ও বিল</button>
-    </div>
-
-    <!-- VIEW 1: Calculator -->
-    <div class="view-panel active" id="view-calc">
-      <div class="calc-screen">
-        <div class="screen-meta">
-          <span class="mode-pill" id="rad-deg-toggle">DEG</span>
-          <button class="copy-btn" id="btn-copy-calc">📋 Copy</button>
-        </div>
-        <div class="primary-display" id="calc-display">0</div>
-        <div class="preview-display" id="calc-preview"></div>
-      </div>
-
-      <!-- Scientific Toggle Row -->
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <button class="icon-btn" id="toggle-sci" style="width:auto; padding:0 14px; border-radius:12px; gap:6px; font-size:12px; font-weight:700;">
-          <span>f(x) Scientific</span>
-        </button>
-        <small style="color:var(--text-muted); font-size:12px;" id="mem-status"></small>
-      </div>
-
-      <!-- Expandable Scientific Panel -->
-      <div class="scientific-panel" id="sci-panel">
-        <button class="sc-btn" onclick="insertFunc('sin(')">sin</button>
-        <button class="sc-btn" onclick="insertFunc('cos(')">cos</button>
-        <button class="sc-btn" onclick="insertFunc('tan(')">tan</button>
-        <button class="sc-btn" onclick="insertFunc('ln(')">ln</button>
-        <button class="sc-btn" onclick="insertFunc('log(')">log</button>
-
-        <button class="sc-btn" onclick="insertFunc('sqrt(')">√</button>
-        <button class="sc-btn" onclick="insertOp('^')">xʸ</button>
-        <button class="sc-btn" onclick="insertOp('^2')">x²</button>
-        <button class="sc-btn" onclick="insertFunc('pi')">π</button>
-        <button class="sc-btn" onclick="insertFunc('e')">e</button>
-      </div>
-
-      <!-- Keypad -->
-      <div class="keypad-grid">
-        <button class="btn btn-func" onclick="clearCalc()">AC</button>
-        <button class="btn btn-func" onclick="negateCalc()">±</button>
-        <button class="btn btn-func" onclick="insertOp('%')">%</button>
-        <button class="btn btn-op" onclick="insertOp('÷')">÷</button>
-
-        <button class="btn btn-num" onclick="insertNum('7')">7</button>
-        <button class="btn btn-num" onclick="insertNum('8')">8</button>
-        <button class="btn btn-num" onclick="insertNum('9')">9</button>
-        <button class="btn btn-op" onclick="insertOp('×')">×</button>
-
-        <button class="btn btn-num" onclick="insertNum('4')">4</button>
-        <button class="btn btn-num" onclick="insertNum('5')">5</button>
-        <button class="btn btn-num" onclick="insertNum('6')">6</button>
-        <button class="btn btn-op" onclick="insertOp('−')">−</button>
-
-        <button class="btn btn-num" onclick="insertNum('1')">1</button>
-        <button class="btn btn-num" onclick="insertNum('2')">2</button>
-        <button class="btn btn-num" onclick="insertNum('3')">3</button>
-        <button class="btn btn-op" onclick="insertOp('+')">+</button>
-
-        <button class="btn btn-func" onclick="insertParen()">( )</button>
-        <button class="btn btn-num" onclick="insertNum('0')">0</button>
-        <button class="btn btn-num" onclick="insertDecimal()">.</button>
-        <button class="btn btn-eq" onclick="evaluateCalc()">=</button>
+  <!-- Cloud Platform Bar -->
+  <div class="platform-header">
+    <div class="brand">
+      <div class="brand-logo">📱</div>
+      <div class="brand-text">
+        <h1>Cloud Virtual Phone OS</h1>
+        <p>Unlimited Virtual Phones & App Store Manager</p>
       </div>
     </div>
-
-    <!-- VIEW 2: Converter -->
-    <div class="view-panel" id="view-conv">
-      <div class="chip-row" id="conv-cat-chips">
-        <button class="chip active" data-cat="length">Length</button>
-        <button class="chip" data-cat="weight">Weight</button>
-        <button class="chip" data-cat="temp">Temperature</button>
-        <button class="chip" data-cat="speed">Speed</button>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <span class="card-label">FROM</span>
-          <select id="conv-from-select"></select>
-        </div>
-        <div class="conv-display" id="conv-input-display">1</div>
-      </div>
-
-      <div class="swap-btn-row">
-        <button class="swap-circle-btn" id="btn-swap-units">⇅</button>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <span class="card-label">TO</span>
-          <select id="conv-to-select"></select>
-        </div>
-        <div class="conv-display" style="color:var(--primary);" id="conv-output-display">1</div>
-      </div>
-
-      <!-- Numeric Keypad for Converter -->
-      <div class="keypad-grid" style="margin-top:8px;">
-        <button class="btn btn-num" onclick="convKey('7')">7</button>
-        <button class="btn btn-num" onclick="convKey('8')">8</button>
-        <button class="btn btn-num" onclick="convKey('9')">9</button>
-        <button class="btn btn-func" onclick="convKey('AC')">AC</button>
-
-        <button class="btn btn-num" onclick="convKey('4')">4</button>
-        <button class="btn btn-num" onclick="convKey('5')">5</button>
-        <button class="btn btn-num" onclick="convKey('6')">6</button>
-        <button class="btn btn-func" onclick="convKey('DEL')">⌫</button>
-
-        <button class="btn btn-num" onclick="convKey('1')">1</button>
-        <button class="btn btn-num" onclick="convKey('2')">2</button>
-        <button class="btn btn-num" onclick="convKey('3')">3</button>
-        <button class="btn btn-func" onclick="convKey('.')">.</button>
-
-        <button class="btn btn-num" style="grid-column: span 2;" onclick="convKey('0')">0</button>
-        <button class="btn btn-num" onclick="convKey('00')">00</button>
-        <button class="btn btn-op" style="font-size:18px;" onclick="switchTab('calc')">Done</button>
-      </div>
+    <div class="user-actions">
+      <button class="btn-create-phone" id="btn-open-create">
+        <span>+ New Phone</span>
+      </button>
     </div>
+  </div>
 
-    <!-- VIEW 3: Tip Calculator -->
-    <div class="view-panel" id="view-tip">
-      <div class="tip-result-card">
-        <small style="font-size:12px; font-weight:700; color:var(--primary); letter-spacing:0.5px;">TOTAL PER PERSON</small>
-        <div class="tip-big-amount" id="tip-person-total">$28.75</div>
-        <div class="tip-stats">
-          <div class="stat-box">
-            <small>Tip / Person</small>
-            <strong id="tip-person-tip">$3.75</strong>
-          </div>
-          <div class="stat-box">
-            <small>Total Tip</small>
-            <strong id="tip-total-tip">$7.50</strong>
-          </div>
-          <div class="stat-box">
-            <small>Total Bill</small>
-            <strong id="tip-total-bill">$57.50</strong>
-          </div>
-        </div>
+  <!-- Multi-Phone Switcher Tabs -->
+  <div class="phones-bar" id="phones-tabs-container">
+    <!-- Rendered phone tabs -->
+  </div>
+
+  <!-- The Smartphone Simulator -->
+  <div class="device-wrapper">
+    <div class="phone-screen" id="phone-screen-bg">
+      
+      <!-- Top Status Bar & Notch -->
+      <div class="status-bar">
+        <span id="status-time">12:30</span>
+        <div class="notch"><div class="notch-camera"></div></div>
+        <span>5G 📶 98% 🔋</span>
       </div>
 
-      <div class="card">
-        <label style="font-size:12px; font-weight:700;">Bill Amount ($)</label>
-        <input type="number" class="input-field" id="tip-bill-input" value="50" step="0.5">
+      <div class="screen-content">
+        <!-- HOME SCREEN -->
+        <div class="home-screen" id="home-screen">
+          <div class="widget-clock">
+            <div class="widget-time" id="clock-display">12:30</div>
+            <div class="widget-date" id="date-display">Friday, November 6</div>
+          </div>
+
+          <!-- Apps on Home Screen -->
+          <div class="app-grid" id="home-apps-grid">
+            <!-- Dynamic app icons inserted here -->
+          </div>
+
+          <!-- Dock Bar -->
+          <div class="dock-bar" id="dock-apps-grid">
+            <!-- Pinned core apps: Phone, Messages, Browser, Camera -->
+          </div>
+        </div>
+
+        <!-- APP WINDOW 1: Play Store / App Store -->
+        <div class="app-window" id="app-store">
+          <div class="app-window-header">
+            <strong>🛍️ Play Store</strong>
+            <button onclick="closeApp()" style="background:none;border:none;color:#fff;font-size:16px;">✕</button>
+          </div>
+          <div class="app-window-body">
+            <div class="store-header">
+              <input type="text" placeholder="Search apps & games..." class="yt-input" style="flex:1;">
+            </div>
+            <div id="store-apps-list">
+              <!-- Rendered store apps -->
+            </div>
+          </div>
+        </div>
+
+        <!-- APP WINDOW 2: YouTube Player -->
+        <div class="app-window" id="app-youtube">
+          <div class="app-window-header">
+            <strong>▶️ YouTube</strong>
+            <button onclick="closeApp()" style="background:none;border:none;color:#fff;font-size:16px;">✕</button>
+          </div>
+          <div class="app-window-body">
+            <div class="yt-search-box">
+              <input type="text" class="yt-input" id="yt-query" placeholder="Search YouTube or paste URL...">
+              <button class="store-btn" onclick="playYouTubeSearch()">Play</button>
+            </div>
+            <div class="yt-player-container">
+              <iframe id="yt-iframe" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+            </div>
+            <h4 style="font-size:14px; margin-bottom:8px;" id="yt-title">Featured Video</h4>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div class="store-item" style="cursor:pointer;" onclick="loadVideo('M7lc1UVf-VE', 'YouTube Developers Overview')">
+                <small>📹 YouTube Developer API Showcase</small>
+              </div>
+              <div class="store-item" style="cursor:pointer;" onclick="loadVideo('L_LUpnjgPso', 'Lofi Hip Hop Radio - Beats to relax/study to')">
+                <small>🎶 24/7 Lofi Chill Beats Stream</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- APP WINDOW 3: Calculator (The Full Built-in Calculator) -->
+        <div class="app-window" id="app-calc">
+          <div class="app-window-header">
+            <strong>🧮 Calculator Pro</strong>
+            <button onclick="closeApp()" style="background:none;border:none;color:#fff;font-size:16px;">✕</button>
+          </div>
+          <div class="app-window-body" style="padding:4px;">
+            <div style="background:#1e2533; border-radius:18px; padding:16px; text-align:right; margin-bottom:10px;">
+              <div style="font-size:32px; font-weight:700; color:#fff;" id="phone-calc-display">0</div>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px;">
+              <button class="store-btn" style="height:48px; background:#374151;" onclick="calcPress('C')">C</button>
+              <button class="store-btn" style="height:48px; background:#374151;" onclick="calcPress('+/-')">±</button>
+              <button class="store-btn" style="height:48px; background:#374151;" onclick="calcPress('%')">%</button>
+              <button class="store-btn" style="height:48px; background:#f59e0b;" onclick="calcPress('/')">÷</button>
+
+              <button class="store-btn" style="height:48px; background:#1f2937;" onclick="calcPress('7')">7</button>
+              <button class="store-btn" style="height:48px; background:#1f2937;" onclick="calcPress('8')">8</button>
+              <button class="store-btn" style="height:48px; background:#1f2937;" onclick="calcPress('9')">9</button>
+              <button class="store-btn" style="height:48px; background:#f59e0b;" onclick="calcPress('*')">×</button>
+
+              <button class="store-btn" style="height:48px; background:#1f2937;" onclick="calcPress('4')">4</button>
+              <button class="store-btn" style="height:48px; background:#1f2937;" onclick="calcPress('5')">5</button>
+              <button class="store-btn" style="height:48px; background:#1f2937;" onclick="calcPress('6')">6</button>
+              <button class="store-btn" style="height:48px; background:#f59e0b;" onclick="calcPress('-')">−</button>
+
+              <button class="store-btn" style="height:48px; background:#1f2937;" onclick="calcPress('1')">1</button>
+              <button class="store-btn" style="height:48px; background:#1f2937;" onclick="calcPress('2')">2</button>
+              <button class="store-btn" style="height:48px; background:#1f2937;" onclick="calcPress('3')">3</button>
+              <button class="store-btn" style="height:48px; background:#f59e0b;" onclick="calcPress('+')">+</button>
+
+              <button class="store-btn" style="height:48px; grid-column:span 2; background:#1f2937;" onclick="calcPress('0')">0</button>
+              <button class="store-btn" style="height:48px; background:#1f2937;" onclick="calcPress('.')">.</button>
+              <button class="store-btn" style="height:48px; background:#10b981;" onclick="calcPress('=')">=</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- APP WINDOW 4: Browser -->
+        <div class="app-window" id="app-browser">
+          <div class="app-window-header">
+            <strong>🌐 Chrome Browser</strong>
+            <button onclick="closeApp()" style="background:none;border:none;color:#fff;font-size:16px;">✕</button>
+          </div>
+          <div class="app-window-body">
+            <div class="yt-search-box">
+              <input type="text" class="yt-input" id="browser-url" value="https://wikipedia.org">
+              <button class="store-btn" onclick="navigateBrowser()">Go</button>
+            </div>
+            <iframe id="browser-iframe" src="https://en.m.wikipedia.org" style="height:550px; border-radius:12px; background:#fff;"></iframe>
+          </div>
+        </div>
+
+        <!-- APP WINDOW 5: Notes App -->
+        <div class="app-window" id="app-notes">
+          <div class="app-window-header">
+            <strong>📝 Notes</strong>
+            <button onclick="closeApp()" style="background:none;border:none;color:#fff;font-size:16px;">✕</button>
+          </div>
+          <div class="app-window-body">
+            <textarea id="notes-content" style="width:100%; height:80%; background:#1a1e28; border:1px solid #2d384e; color:#fff; border-radius:14px; padding:12px; font-size:14px; outline:none;" placeholder="Write your thoughts or todo list here..."></textarea>
+            <button class="store-btn" style="margin-top:10px; width:100%; padding:10px;" onclick="saveNote()">Save Notes</button>
+          </div>
+        </div>
+
+        <!-- APP WINDOW 6: Settings -->
+        <div class="app-window" id="app-settings">
+          <div class="app-window-header">
+            <strong>⚙️ Phone Settings</strong>
+            <button onclick="closeApp()" style="background:none;border:none;color:#fff;font-size:16px;">✕</button>
+          </div>
+          <div class="app-window-body">
+            <div class="store-item">
+              <div>
+                <strong>Wallpaper</strong>
+                <small style="display:block; color:#94a3b8;">Choose phone theme</small>
+              </div>
+              <button class="store-btn" onclick="changeWallpaper()">Change</button>
+            </div>
+            <div class="store-item">
+              <div>
+                <strong>RAM & Storage</strong>
+                <small style="display:block; color:#94a3b8;">8 GB / 128 GB Virtual</small>
+              </div>
+              <span style="color:#10b981; font-size:12px;">Good</span>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      <div class="card">
-        <div class="card-header">
-          <label style="font-size:12px; font-weight:700;">Tip Percentage</label>
-          <strong style="color:var(--primary);" id="tip-pct-display">15%</strong>
-        </div>
-        <div class="chip-row">
-          <button class="chip" onclick="setTipPct(10)">10%</button>
-          <button class="chip active" onclick="setTipPct(15)">15%</button>
-          <button class="chip" onclick="setTipPct(18)">18%</button>
-          <button class="chip" onclick="setTipPct(20)">20%</button>
-          <button class="chip" onclick="setTipPct(25)">25%</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <label style="font-size:12px; font-weight:700;">Split Between</label>
-          <strong id="split-count-display">2 People</strong>
-        </div>
-        <div style="display:flex; gap:12px; align-items:center;">
-          <button class="btn btn-func" style="height:44px; flex:1;" onclick="changeSplit(-1)">−</button>
-          <button class="btn btn-func" style="height:44px; flex:1;" onclick="changeSplit(1)">+</button>
-        </div>
+      <!-- Android Bottom Nav Bar -->
+      <div class="phone-nav-bar">
+        <span class="nav-btn" onclick="goBack()">◀</span>
+        <span class="nav-btn" onclick="goHome()">●</span>
+        <span class="nav-btn" onclick="openRecents()">■</span>
       </div>
     </div>
   </div>
 
-  <!-- History Modal -->
-  <div class="modal-overlay" id="history-modal">
-    <div class="modal-content">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3 style="font-size:18px;">Calculation History</h3>
-        <button class="icon-btn" onclick="closeHistory()">✕</button>
+  <!-- Create New Phone Modal -->
+  <div class="create-modal-overlay" id="create-modal">
+    <div class="create-modal">
+      <h3 style="font-size:18px;">📱 Create New Virtual Phone</h3>
+      <p style="font-size:12px; color:var(--text-muted);">আপনি যতগুলো ইচ্ছা আলাদা আলাদা ভার্চুয়াল ফোন তৈরি করতে পারেন। প্রতিটি ফোনে আলাদা অ্যাপ ও ডেটা থাকবে।</p>
+      <input type="text" id="new-phone-name" class="create-input" placeholder="Phone Name (e.g. My Galaxy S24, Work Phone)">
+      
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+        <button class="store-btn" style="background:#374151;" onclick="closeCreateModal()">Cancel</button>
+        <button class="store-btn" onclick="createNewPhone()">Create Phone</button>
       </div>
-      <div class="history-list" id="history-items">
-        <!-- Rendered items -->
-      </div>
-      <button class="btn btn-func" style="height:48px; font-size:14px; color:#ef4444;" onclick="clearHistory()">Clear History</button>
     </div>
   </div>
-
-  <div class="toast" id="toast">Copied to clipboard</div>
 
   <script>
-    // --- State Variables ---
-    let currentExpression = "0";
-    let isEvaluated = false;
-    let isRadian = false;
-    let history = JSON.parse(localStorage.getItem("calc_history") || "[]");
+    // --- Available Apps In The Cloud Store ---
+    const STORE_CATALOG = [
+      { id: "store", name: "Play Store", icon: "🛍️", bg: "#10b981", default: true },
+      { id: "youtube", name: "YouTube", icon: "▶️", bg: "#ef4444", default: true },
+      { id: "calc", name: "Calculator", icon: "🧮", bg: "#f59e0b", default: true },
+      { id: "browser", name: "Chrome", icon: "🌐", bg: "#3b82f6", default: true },
+      { id: "notes", name: "Notes", icon: "📝", bg: "#8b5cf6", default: true },
+      { id: "settings", name: "Settings", icon: "⚙️", bg: "#6b7280", default: true },
+      { id: "camera", name: "Camera", icon: "📷", bg: "#14b8a6", default: false },
+      { id: "clock", name: "Clock", icon: "⏰", bg: "#ec4899", default: false },
+      { id: "music", name: "Music", icon: "🎵", bg: "#f43f5e", default: false },
+      { id: "game", name: "Arcade", icon: "🎮", bg: "#6366f1", default: false }
+    ];
 
-    const display = document.getElementById("calc-display");
-    const preview = document.getElementById("calc-preview");
-    const toast = document.getElementById("toast");
+    // --- Wallpaper presets ---
+    const WALLPAPERS = [
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80"
+    ];
 
-    function showToast(msg) {
-      toast.innerText = msg;
-      toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 2000);
-    }
-
-    // --- Tab Navigation ---
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-      btn.addEventListener("click", () => switchTab(btn.dataset.tab));
-    });
-
-    function switchTab(tabId) {
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tabId));
-      document.querySelectorAll(".view-panel").forEach(p => p.classList.toggle("active", p.id === `view-${tabId}`));
-    }
-
-    // --- Theme Toggle ---
-    const themeBtn = document.getElementById("btn-theme");
-    themeBtn.addEventListener("click", () => {
-      const isDark = document.body.dataset.theme !== "light";
-      document.body.dataset.theme = isDark ? "light" : "dark";
-      themeBtn.innerText = isDark ? "☀️" : "🌙";
-    });
-
-    // --- Scientific Toggle ---
-    const sciToggle = document.getElementById("toggle-sci");
-    const sciPanel = document.getElementById("sci-panel");
-    sciToggle.addEventListener("click", () => {
-      sciPanel.classList.toggle("active");
-      sciToggle.classList.toggle("active");
-    });
-
-    // --- Radian/Degree Toggle ---
-    const radDegToggle = document.getElementById("rad-deg-toggle");
-    radDegToggle.addEventListener("click", () => {
-      isRadian = !isRadian;
-      radDegToggle.innerText = isRadian ? "RAD" : "DEG";
-      updatePreview();
-    });
-
-    // --- Calculator Engine ---
-    function insertNum(num) {
-      if (currentExpression === "0" || isEvaluated) {
-        currentExpression = num;
-        isEvaluated = false;
-      } else {
-        currentExpression += num;
-      }
-      renderCalc();
-    }
-
-    function insertDecimal() {
-      if (isEvaluated) {
-        currentExpression = "0.";
-        isEvaluated = false;
-      } else {
-        const lastPart = currentExpression.split(/[\+\−\×\÷\^\(\)]/).pop();
-        if (!lastPart.includes(".")) {
-          currentExpression += ".";
+    // --- State & Multi-Phone Storage ---
+    let phones = JSON.parse(localStorage.getItem("cloud_virtual_phones") || "null");
+    if (!phones || phones.length === 0) {
+      phones = [
+        {
+          id: "phone-1",
+          name: "Pixel 9 Pro (Primary)",
+          wallpaper: WALLPAPERS[0],
+          installedApps: ["store", "youtube", "calc", "browser", "notes", "settings"]
         }
-      }
-      renderCalc();
+      ];
+      localStorage.setItem("cloud_virtual_phones", JSON.stringify(phones));
     }
 
-    function insertOp(op) {
-      isEvaluated = false;
-      const lastChar = currentExpression.slice(-1);
-      if (["+", "−", "×", "÷", "^", "%"].includes(lastChar)) {
-        currentExpression = currentExpression.slice(0, -1) + op;
-      } else {
-        currentExpression += op;
-      }
-      renderCalc();
+    let activePhoneId = phones[0].id;
+    let currentOpenAppId = null;
+
+    // --- UI Elements ---
+    const phonesTabsContainer = document.getElementById("phones-tabs-container");
+    const homeScreen = document.getElementById("home-screen");
+    const homeAppsGrid = document.getElementById("home-apps-grid");
+    const dockAppsGrid = document.getElementById("dock-apps-grid");
+    const phoneScreenBg = document.getElementById("phone-screen-bg");
+    const storeAppsList = document.getElementById("store-apps-list");
+
+    // Clock
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById("status-time").innerText = timeStr;
+      document.getElementById("clock-display").innerText = timeStr;
+      document.getElementById("date-display").innerText = now.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
     }
+    setInterval(updateClock, 1000);
+    updateClock();
 
-    function insertFunc(func) {
-      if (currentExpression === "0" || isEvaluated) {
-        currentExpression = func;
-        isEvaluated = false;
-      } else {
-        currentExpression += func;
-      }
-      renderCalc();
-    }
-
-    function insertParen() {
-      if (isEvaluated) {
-        currentExpression = "(";
-        isEvaluated = false;
-        renderCalc();
-        return;
-      }
-      const openCount = (currentExpression.match(/\(/g) || []).length;
-      const closeCount = (currentExpression.match(/\)/g) || []).length;
-      const lastChar = currentExpression.slice(-1);
-
-      if (openCount > closeCount && (/\d|\)/.test(lastChar))) {
-        currentExpression += ")";
-      } else {
-        currentExpression += currentExpression === "0" ? "(" : "×(";
-      }
-      renderCalc();
-    }
-
-    function clearCalc() {
-      currentExpression = "0";
-      preview.innerText = "";
-      isEvaluated = false;
-      renderCalc();
-    }
-
-    function negateCalc() {
-      if (currentExpression.startsWith("-")) {
-        currentExpression = currentExpression.slice(1);
-      } else if (currentExpression !== "0") {
-        currentExpression = "-" + currentExpression;
-      }
-      renderCalc();
-    }
-
-    function parseMath(expr) {
-      let s = expr
-        .replace(/×/g, "*")
-        .replace(/÷/g, "/")
-        .replace(/−/g, "-")
-        .replace(/pi/g, "Math.PI")
-        .replace(/e/g, "Math.E")
-        .replace(/sqrt\(/g, "Math.sqrt(")
-        .replace(/ln\(/g, "Math.log(")
-        .replace(/log\(/g, "Math.log10(");
-
-      if (!isRadian) {
-        s = s.replace(/sin\(([^)]+)\)/g, "Math.sin(($1) * Math.PI / 180)")
-             .replace(/cos\(([^)]+)\)/g, "Math.cos(($1) * Math.PI / 180)")
-             .replace(/tan\(([^)]+)\)/g, "Math.tan(($1) * Math.PI / 180)");
-      } else {
-        s = s.replace(/sin\(/g, "Math.sin(")
-             .replace(/cos\(/g, "Math.cos(")
-             .replace(/tan\(/g, "Math.tan(");
-      }
-
-      s = s.replace(/(\d+)\^(\d+)/g, "Math.pow($1, $2)");
-
-      // Auto close parens
-      const openCount = (s.match(/\(/g) || []).length;
-      const closeCount = (s.match(/\)/g) || []).length;
-      if (openCount > closeCount) {
-        s += ")".repeat(openCount - closeCount);
-      }
-
-      return Function('"use strict"; return (' + s + ')')();
-    }
-
-    function updatePreview() {
-      try {
-        if (/[\+\−\×\÷\^]/.test(currentExpression)) {
-          const res = parseMath(currentExpression);
-          if (res !== undefined && !isNaN(res) && isFinite(res)) {
-            preview.innerText = "= " + formatNumber(res);
-          } else {
-            preview.innerText = "";
-          }
-        } else {
-          preview.innerText = "";
-        }
-      } catch (_) {
-        preview.innerText = "";
-      }
-    }
-
-    function evaluateCalc() {
-      try {
-        const res = parseMath(currentExpression);
-        if (isNaN(res) || !isFinite(res)) throw new Error();
-        const formatted = formatNumber(res);
-
-        // Save history
-        history.unshift({ expr: currentExpression, res: formatted, time: Date.now() });
-        if (history.length > 50) history.pop();
-        localStorage.setItem("calc_history", JSON.stringify(history));
-
-        preview.innerText = "";
-        currentExpression = formatted;
-        isEvaluated = true;
-        renderCalc();
-      } catch (_) {
-        preview.innerText = "Error";
-      }
-    }
-
-    function formatNumber(num) {
-      return Number(Math.round(num + "e8") + "e-8").toLocaleString('en-US');
-    }
-
-    function renderCalc() {
-      display.innerText = currentExpression;
-      updatePreview();
-    }
-
-    document.getElementById("btn-copy-calc").addEventListener("click", () => {
-      navigator.clipboard.writeText(currentExpression);
-      showToast("Copied: " + currentExpression);
-    });
-
-    // --- History Modal ---
-    const historyModal = document.getElementById("history-modal");
-    document.getElementById("btn-history").addEventListener("click", () => {
-      renderHistory();
-      historyModal.classList.add("open");
-    });
-
-    function closeHistory() {
-      historyModal.classList.remove("open");
-    }
-
-    function clearHistory() {
-      history = [];
-      localStorage.removeItem("calc_history");
-      renderHistory();
-    }
-
-    function renderHistory() {
-      const container = document.getElementById("history-items");
-      if (history.length === 0) {
-        container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:30px 0;">কোনো হিস্ট্রি পাওয়া যায়নি</p>`;
-        return;
-      }
-      container.innerHTML = history.map(item => `
-        <div class="history-item" onclick="loadHistory('${item.expr}')">
-          <div class="history-expr">${item.expr}</div>
-          <div class="history-res">= ${item.res}</div>
+    // Render Multi-Phone Switcher Tabs
+    function renderPhoneTabs() {
+      phonesTabsContainer.innerHTML = phones.map(p => `
+        <div class="phone-pill ${p.id === activePhoneId ? 'active' : ''}" onclick="switchPhone('${p.id}')">
+          <span>📱 ${p.name}</span>
+          ${phones.length > 1 ? `<span class="delete-btn" onclick="event.stopPropagation(); deletePhone('${p.id}')">✕</span>` : ''}
         </div>
       `).join("");
     }
 
-    function loadHistory(expr) {
-      currentExpression = expr;
-      isEvaluated = false;
-      renderCalc();
-      closeHistory();
+    function switchPhone(id) {
+      activePhoneId = id;
+      closeApp();
+      renderPhoneTabs();
+      loadActivePhoneData();
     }
 
-    // --- Unit Converter ---
-    const convData = {
-      length: {
-        units: { "Meter": 1, "Kilometer": 1000, "Centimeter": 0.01, "Mile": 1609.34, "Foot": 0.3048, "Inch": 0.0254 }
-      },
-      weight: {
-        units: { "Kilogram": 1, "Gram": 0.001, "Pound (lb)": 0.453592, "Ounce (oz)": 0.0283495, "Ton": 1000 }
-      },
-      temp: {
-        units: { "Celsius": "C", "Fahrenheit": "F", "Kelvin": "K" }
-      },
-      speed: {
-        units: { "km/h": 1, "mph": 1.60934, "m/s": 3.6 }
+    function loadActivePhoneData() {
+      const phone = phones.find(p => p.id === activePhoneId) || phones[0];
+      phoneScreenBg.style.backgroundImage = `url('${phone.wallpaper}')`;
+
+      // Render home apps
+      const installed = phone.installedApps || [];
+      const homeApps = STORE_CATALOG.filter(a => installed.includes(a.id));
+
+      homeAppsGrid.innerHTML = homeApps.map(a => `
+        <div class="app-icon-item" onclick="launchApp('${a.id}')">
+          <div class="icon-box" style="background:${a.bg};">${a.icon}</div>
+          <span class="app-name">${a.name}</span>
+        </div>
+      `).join("");
+
+      // Render dock (Browser, Calc, YouTube, Store)
+      dockAppsGrid.innerHTML = [
+        { id: "browser", icon: "🌐", bg: "#3b82f6" },
+        { id: "calc", icon: "🧮", bg: "#f59e0b" },
+        { id: "youtube", icon: "▶️", bg: "#ef4444" },
+        { id: "store", icon: "🛍️", bg: "#10b981" }
+      ].map(a => `
+        <div class="app-icon-item" onclick="launchApp('${a.id}')">
+          <div class="icon-box" style="width:48px;height:48px;font-size:20px;background:${a.bg};">${a.icon}</div>
+        </div>
+      `).join("");
+
+      renderStoreCatalog();
+    }
+
+    // Render Store Items
+    function renderStoreCatalog() {
+      const phone = phones.find(p => p.id === activePhoneId);
+      const installed = phone.installedApps || [];
+
+      storeAppsList.innerHTML = STORE_CATALOG.map(app => {
+        const isInstalled = installed.includes(app.id);
+        return `
+          <div class="store-item">
+            <div class="store-info">
+              <div class="icon-box" style="width:42px;height:42px;font-size:20px;background:${app.bg};">${app.icon}</div>
+              <div>
+                <strong>${app.name}</strong>
+                <small style="display:block;color:#94a3b8;">${isInstalled ? 'Installed' : 'Ready to install'}</small>
+              </div>
+            </div>
+            ${isInstalled ? 
+              `<button class="store-btn installed" onclick="launchApp('${app.id}')">Open</button>` : 
+              `<button class="store-btn" onclick="installApp('${app.id}')">Install</button>`
+            }
+          </div>
+        `;
+      }).join("");
+    }
+
+    function installApp(appId) {
+      const phone = phones.find(p => p.id === activePhoneId);
+      if (!phone.installedApps.includes(appId)) {
+        phone.installedApps.push(appId);
+        savePhones();
+        loadActivePhoneData();
       }
-    };
-
-    let activeCat = "length";
-    let convInput = "1";
-
-    const fromSelect = document.getElementById("conv-from-select");
-    const toSelect = document.getElementById("conv-to-select");
-    const convInputDisplay = document.getElementById("conv-input-display");
-    const convOutputDisplay = document.getElementById("conv-output-display");
-
-    document.querySelectorAll("#conv-cat-chips .chip").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll("#conv-cat-chips .chip").forEach(c => c.classList.remove("active"));
-        btn.classList.add("active");
-        activeCat = btn.dataset.cat;
-        populateUnits();
-      });
-    });
-
-    function populateUnits() {
-      const units = Object.keys(convData[activeCat].units);
-      fromSelect.innerHTML = units.map(u => `<option value="${u}">${u}</option>`).join("");
-      toSelect.innerHTML = units.map(u => `<option value="${u}">${u}</option>`).join("");
-      if (units.length > 1) toSelect.selectedIndex = 1;
-      calculateConv();
     }
 
-    function calculateConv() {
-      convInputDisplay.innerText = convInput;
-      const val = parseFloat(convInput) || 0;
-      const uFrom = fromSelect.value;
-      const uTo = toSelect.value;
-
-      if (activeCat === "temp") {
-        let celsius = val;
-        if (uFrom === "Fahrenheit") celsius = (val - 32) * 5/9;
-        if (uFrom === "Kelvin") celsius = val - 273.15;
-
-        let res = celsius;
-        if (uTo === "Fahrenheit") res = (celsius * 9/5) + 32;
-        if (uTo === "Kelvin") res = celsius + 273.15;
-        convOutputDisplay.innerText = res.toFixed(2);
-        return;
-      }
-
-      const rates = convData[activeCat].units;
-      const base = val * rates[uFrom];
-      const res = base / rates[uTo];
-      convOutputDisplay.innerText = Number(res.toFixed(6)).toString();
-    }
-
-    fromSelect.addEventListener("change", calculateConv);
-    toSelect.addEventListener("change", calculateConv);
-
-    document.getElementById("btn-swap-units").addEventListener("click", () => {
-      const temp = fromSelect.selectedIndex;
-      fromSelect.selectedIndex = toSelect.selectedIndex;
-      toSelect.selectedIndex = temp;
-      calculateConv();
-    });
-
-    function convKey(k) {
-      if (k === "AC") convInput = "0";
-      else if (k === "DEL") convInput = convInput.length <= 1 ? "0" : convInput.slice(0, -1);
-      else if (k === ".") {
-        if (!convInput.includes(".")) convInput += ".";
+    function launchApp(appId) {
+      closeApp();
+      currentOpenAppId = appId;
+      const appWin = document.getElementById(`app-${appId}`);
+      if (appWin) {
+        homeScreen.classList.add("hidden");
+        appWin.classList.add("active");
       } else {
-        convInput = convInput === "0" ? k : convInput + k;
+        alert(`${appId} is opening...`);
       }
-      calculateConv();
     }
 
-    populateUnits();
-
-    // --- Tip Calculator ---
-    let tipPercent = 15;
-    let splitCount = 2;
-
-    const tipBillInput = document.getElementById("tip-bill-input");
-    const tipPctDisplay = document.getElementById("tip-pct-display");
-    const splitCountDisplay = document.getElementById("split-count-display");
-
-    function calculateTip() {
-      const bill = parseFloat(tipBillInput.value) || 0;
-      const tipTotal = bill * (tipPercent / 100);
-      const total = bill + tipTotal;
-      const perPersonTotal = splitCount > 0 ? total / splitCount : 0;
-      const perPersonTip = splitCount > 0 ? tipTotal / splitCount : 0;
-
-      document.getElementById("tip-person-total").innerText = "$" + perPersonTotal.toFixed(2);
-      document.getElementById("tip-person-tip").innerText = "$" + perPersonTip.toFixed(2);
-      document.getElementById("tip-total-tip").innerText = "$" + tipTotal.toFixed(2);
-      document.getElementById("tip-total-bill").innerText = "$" + total.toFixed(2);
+    function closeApp() {
+      document.querySelectorAll(".app-window").forEach(w => w.classList.remove("active"));
+      homeScreen.classList.remove("hidden");
+      currentOpenAppId = null;
     }
 
-    function setTipPct(pct) {
-      tipPercent = pct;
-      tipPctDisplay.innerText = pct + "%";
-      document.querySelectorAll("#view-tip .chip").forEach(c => {
-        c.classList.toggle("active", c.innerText === pct + "%");
+    function goHome() {
+      closeApp();
+    }
+
+    function goBack() {
+      if (currentOpenAppId) closeApp();
+    }
+
+    function openRecents() {
+      alert("Active Phone: " + phones.find(p => p.id === activePhoneId).name);
+    }
+
+    // --- Phone Creation ---
+    const createModal = document.getElementById("create-modal");
+    document.getElementById("btn-open-create").addEventListener("click", () => {
+      document.getElementById("new-phone-name").value = `Phone ${phones.length + 1}`;
+      createModal.classList.add("open");
+    });
+
+    function closeCreateModal() {
+      createModal.classList.remove("open");
+    }
+
+    function createNewPhone() {
+      const name = document.getElementById("new-phone-name").value.trim() || `Phone ${phones.length + 1}`;
+      const newId = `phone-${Date.now()}`;
+      phones.push({
+        id: newId,
+        name: name,
+        wallpaper: WALLPAPERS[phones.length % WALLPAPERS.length],
+        installedApps: ["store", "youtube", "calc", "browser", "notes", "settings"]
       });
-      calculateTip();
+      savePhones();
+      closeCreateModal();
+      switchPhone(newId);
     }
 
-    function changeSplit(delta) {
-      splitCount = Math.max(1, splitCount + delta);
-      splitCountDisplay.innerText = splitCount + (splitCount === 1 ? " Person" : " People");
-      calculateTip();
+    function deletePhone(id) {
+      if (phones.length <= 1) return;
+      if (confirm("Delete this virtual phone?")) {
+        phones = phones.filter(p => p.id !== id);
+        savePhones();
+        switchPhone(phones[0].id);
+      }
     }
 
-    tipBillInput.addEventListener("input", calculateTip);
-    calculateTip();
+    function savePhones() {
+      localStorage.setItem("cloud_virtual_phones", JSON.stringify(phones));
+    }
+
+    function changeWallpaper() {
+      const phone = phones.find(p => p.id === activePhoneId);
+      const nextWp = WALLPAPERS[(WALLPAPERS.indexOf(phone.wallpaper) + 1) % WALLPAPERS.length];
+      phone.wallpaper = nextWp;
+      savePhones();
+      loadActivePhoneData();
+    }
+
+    // --- In-App YouTube Search ---
+    function playYouTubeSearch() {
+      const q = document.getElementById("yt-query").value.trim();
+      if (!q) return;
+      document.getElementById("yt-iframe").src = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(q)}`;
+      document.getElementById("yt-title").innerText = "Playing: " + q;
+    }
+
+    function loadVideo(id, title) {
+      document.getElementById("yt-iframe").src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+      document.getElementById("yt-title").innerText = title;
+    }
+
+    // --- In-App Calculator Logic ---
+    let calcVal = "0";
+    function calcPress(k) {
+      const disp = document.getElementById("phone-calc-display");
+      if (k === "C") calcVal = "0";
+      else if (k === "=") {
+        try {
+          calcVal = eval(calcVal.replace(/×/g, "*").replace(/÷/g, "/")).toString();
+        } catch (_) {
+          calcVal = "Error";
+        }
+      } else {
+        calcVal = calcVal === "0" ? k : calcVal + k;
+      }
+      disp.innerText = calcVal;
+    }
+
+    // --- In-App Browser ---
+    function navigateBrowser() {
+      let url = document.getElementById("browser-url").value.trim();
+      if (!url.startsWith("http")) url = "https://" + url;
+      document.getElementById("browser-iframe").src = url;
+    }
+
+    // --- Notes App ---
+    function saveNote() {
+      const note = document.getElementById("notes-content").value;
+      localStorage.setItem(`phone_notes_${activePhoneId}`, note);
+      alert("Note saved successfully!");
+    }
+
+    // Initial Load
+    renderPhoneTabs();
+    loadActivePhoneData();
   </script>
 </body>
 </html>
